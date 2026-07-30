@@ -1,178 +1,99 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>KDEMO — METAR Lamp (Demo)</title>
+<title>KDEMO METAR Lamp (Demo)</title>
 <style>
-  :root {
-    --bg: #10141b;
-    --panel: #1a2029;
-    --line: #2a3340;
-    --text: #e8edf4;
-    --dim: #8a97a8;
-    --vfr: #22c55e;
-    --mvfr: #3b82f6;
-    --ifr: #ef4444;
-    --lifr: #d946ef;
-    --accent: #38bdf8;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    line-height: 1.45;
-    padding: 16px;
-    max-width: 720px;
-    margin: 0 auto;
-  }
-  .demo-banner {
-    background: #3b2f10;
-    border: 1px solid #8a6d1a;
-    color: #f5d97b;
-    border-radius: 10px;
-    padding: 10px 14px;
-    font-size: 14px;
-    margin-bottom: 16px;
-  }
-  header {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 4px;
-    margin-bottom: 14px;
-  }
-  h1 { font-size: 22px; font-weight: 700; }
-  header .fw { color: var(--dim); font-size: 13px; }
-  .panel {
-    background: var(--panel);
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    padding: 14px 16px;
-    margin-bottom: 14px;
-  }
-  .panel h2 {
-    font-size: 13px;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--dim);
-    margin-bottom: 10px;
-  }
-  table { width: 100%; border-collapse: collapse; }
-  td { padding: 7px 4px; border-top: 1px solid var(--line); font-size: 15px; }
-  tr:first-child td { border-top: none; }
-  .dot {
-    display: inline-block;
-    width: 13px; height: 13px;
-    border-radius: 50%;
-    margin-right: 10px;
-    vertical-align: -1px;
-    box-shadow: 0 0 8px 1px currentColor;
-  }
-  .vfr  { color: var(--vfr); }
-  .mvfr { color: var(--mvfr); }
-  .ifr  { color: var(--ifr); }
-  .lifr { color: var(--lifr); }
-  .cat  { font-weight: 600; width: 64px; }
-  .apt  { font-weight: 600; }
-  .name { color: var(--dim); font-size: 13px; }
-  .metar {
-    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-    font-size: 13px;
-    color: var(--dim);
-    background: #12161d;
-    border-radius: 8px;
-    padding: 10px 12px;
-    overflow-x: auto;
-    white-space: pre;
-  }
-  .row { display: flex; justify-content: space-between; padding: 6px 0; border-top: 1px solid var(--line); font-size: 15px; }
-  .row:first-of-type { border-top: none; }
-  .row .k { color: var(--dim); }
-  .legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 13px; color: var(--dim); }
-  .legend span { white-space: nowrap; }
-  footer { color: var(--dim); font-size: 12px; text-align: center; margin: 20px 0 8px; }
-  a { color: var(--accent); }
+/* Styles mirrored from a real METAR lamp's built-in page (app.css, FW189) */
+*{box-sizing:border-box}
+body{margin:0;background:#eef1f6;color:#1c2533;
+     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+     -webkit-font-smoothing:antialiased;line-height:1.4}
+.demobar{background:#8a6d1a;color:#fff;text-align:center;font-size:.78rem;font-weight:600;
+         padding:7px 12px}
+header{background:#142033;color:#fff;padding:22px 16px;text-align:center}
+header h1{margin:0;font-size:1.25rem;font-weight:600}
+header p{margin:6px 0 0;color:#9fb0c9;font-size:.82rem}
+.wrap{max-width:760px;margin:0 auto;padding:16px}
+.card{background:#fff;border:1px solid #e6e9ef;border-radius:14px;padding:18px;margin:16px 0;
+      box-shadow:0 1px 3px rgba(16,24,40,.06)}
+.card h2{margin:0 0 14px;font-size:1.02rem;font-weight:600}
+.cat{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.badge{display:inline-block;padding:6px 14px;border-radius:999px;color:#fff;font-weight:700;font-size:.95rem}
+.cond-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 14px}
+.cond-head h2{margin:0}
+@keyframes flypulse{0%,100%{box-shadow:0 0 0 0 rgba(31,157,87,.33)}50%{box-shadow:0 0 0 6px rgba(31,157,87,0)}}
+.flypill{display:inline-flex;align-items:center;gap:6px;font-size:.72rem;font-weight:700;padding:4px 11px;border-radius:999px;white-space:nowrap}
+.flypill.idle{background:#eef1f6;color:#6b7686;border:1px solid #d9dee7}
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:12px}
+.metric{background:#f7f9fc;border:1px solid #eef1f6;border-radius:10px;padding:12px 14px}
+.metric .k{font-size:.7rem;text-transform:uppercase;letter-spacing:.6px;color:#6b7686;margin-bottom:5px}
+.metric .v{font-size:.9rem;font-weight:600;white-space:normal;overflow-wrap:anywhere}
+.tabbar{max-width:760px;margin:16px auto 0;padding:0 16px;display:flex;flex-wrap:wrap;gap:8px}
+.tabbtn{flex:1 1 auto;width:auto;margin:0;padding:9px 12px;border:1px solid #d4dae3;border-radius:9px;
+        background:#fff;color:#344251;font-size:.86rem;font-weight:600;cursor:pointer;white-space:nowrap}
+.tabbtn:hover{background:#eef3fc}
+.tabbtn.active{background:#2f6fde;border-color:#2f6fde;color:#fff}
+.tabbtn.active:hover{background:#285fc0}
+.tabnote{max-width:760px;margin:0 auto;padding:24px 16px;color:#6b7280;font-size:.9rem}
+footer{text-align:center;color:#9aa4b3;font-size:.75rem;padding:8px 0 28px}
+footer a{color:#2f6fde}
 </style>
 </head>
 <body>
-
-<div class="demo-banner">
-  <strong>Demo lamp.</strong> This is a hosted example of a METAR lamp&rsquo;s built-in
-  web page, shown by METAR Lamp Finder&rsquo;s &ldquo;demo lamp&rdquo; entry so the app can be
-  explored without lamp hardware. A real lamp serves this page itself, on your own Wi&#8209;Fi.
-</div>
-
+<div class="demobar">Demo — a hosted example of a METAR lamp’s built-in page. A real lamp serves this itself, on your own Wi-Fi.</div>
 <header>
-  <h1>KDEMO &mdash; METAR Lamp</h1>
-  <span class="fw">Firmware 1.8.4 &middot; Demo</span>
+<h1>🛫 KDEMO METAR Lamp</h1>
+<p>Setup &amp; live conditions</p>
 </header>
-
-<div class="panel">
-  <h2>Airports on this lamp</h2>
-  <table>
-    <tr>
-      <td class="apt"><span class="dot vfr"></span>KPAO</td>
-      <td class="name">Palo Alto</td>
-      <td class="cat vfr">VFR</td>
-    </tr>
-    <tr>
-      <td class="apt"><span class="dot vfr"></span>KSQL</td>
-      <td class="name">San Carlos</td>
-      <td class="cat vfr">VFR</td>
-    </tr>
-    <tr>
-      <td class="apt"><span class="dot mvfr"></span>KSFO</td>
-      <td class="name">San Francisco Intl</td>
-      <td class="cat mvfr">MVFR</td>
-    </tr>
-    <tr>
-      <td class="apt"><span class="dot mvfr"></span>KHAF</td>
-      <td class="name">Half Moon Bay</td>
-      <td class="cat mvfr">MVFR</td>
-    </tr>
-    <tr>
-      <td class="apt"><span class="dot ifr"></span>KMRY</td>
-      <td class="name">Monterey</td>
-      <td class="cat ifr">IFR</td>
-    </tr>
-    <tr>
-      <td class="apt"><span class="dot lifr"></span>KAST</td>
-      <td class="name">Astoria</td>
-      <td class="cat lifr">LIFR</td>
-    </tr>
-  </table>
+<div class="tabbar">
+<button class="tabbtn active" data-tab="status">Conditions</button>
+<button class="tabbtn" data-tab="wifi">Wi-Fi</button>
+<button class="tabbtn" data-tab="station">Station</button>
+<button class="tabbtn" data-tab="sched">Schedule</button>
+<button class="tabbtn" data-tab="fw">Firmware</button>
+<button class="tabbtn" data-tab="adv">Advanced</button>
 </div>
-
-<div class="panel">
-  <h2>Latest METAR &mdash; KPAO</h2>
-  <div class="metar">KPAO 301847Z 32008KT 10SM FEW025 21/12 A3012 RMK AO2</div>
+<div class="wrap"><div id="tabbody">
+<div class="card">
+<div class="cond-head"><h2>Current Conditions</h2><span class="flypill idle">✈ N123DM · on the ground</span></div>
+<div class="cat">
+<span class="badge" style="background:#2e9e44">VFR</span>
+<span style="color:#3d4a5d;font-size:1.05rem;font-weight:700;letter-spacing:.03em">KDEMO</span>
 </div>
-
-<div class="panel">
-  <h2>Status</h2>
-  <div class="row"><span class="k">Weather source</span><span>aviationweather.gov</span></div>
-  <div class="row"><span class="k">Last update</span><span>3 minutes ago</span></div>
-  <div class="row"><span class="k">Next update</span><span>in 12 minutes</span></div>
-  <div class="row"><span class="k">Brightness</span><span>Auto (day)</span></div>
-  <div class="row"><span class="k">Wi&#8209;Fi</span><span>DemoNet &middot; &minus;48 dBm</span></div>
+<div class="metrics">
+<div class="metric"><div class="k">Airport Local Time</div><div class="v">8:12:05 AM</div></div>
+<div class="metric"><div class="k">METAR Time</div><div class="v">2026-07-30T15:00:00Z</div></div>
+<div class="metric"><div class="k">Wind</div><div class="v">310° at 8 kt / 9.2 mph</div></div>
+<div class="metric"><div class="k">Gusts</div><div class="v">0 kt / 0.0 mph</div></div>
+<div class="metric"><div class="k">Visibility</div><div class="v">10 sm</div></div>
+<div class="metric"><div class="k">Ceiling</div><div class="v">Unlimited</div></div>
+<div class="metric"><div class="k">Sky</div><div class="v">Few at 2,500 ft</div></div>
+<div class="metric"><div class="k">Temperature</div><div class="v">21 °C / 69.8 °F</div></div>
+<div class="metric"><div class="k">Dewpoint</div><div class="v">12 °C / 53.6 °F</div></div>
+<div class="metric"><div class="k">Altimeter</div><div class="v">30.12 inHg</div></div>
+<div class="metric"><div class="k">Forecast (TAF) &middot; KDEMO</div><div class="v"><span style="color:#6b7686">&#8594; steady</span></div></div>
+<div class="metric"><div class="k">Wi-Fi Signal</div><div class="v">-48 dBm (excellent)</div></div>
 </div>
-
-<div class="panel">
-  <h2>Flight categories</h2>
-  <div class="legend">
-    <span><span class="dot vfr"></span>VFR</span>
-    <span><span class="dot mvfr"></span>MVFR</span>
-    <span><span class="dot ifr"></span>IFR</span>
-    <span><span class="dot lifr"></span>LIFR</span>
-  </div>
 </div>
-
-<footer>
-  METAR Lamp Finder demo page &middot; <a href="support.html">Support</a> &middot; <a href="privacy.html">Privacy</a>
-</footer>
-
+<div class="tabnote" id="demonote" style="display:none">This hosted demo shows the Conditions view only. On a real lamp, the Wi-Fi, Station, Schedule, Firmware and Advanced tabs configure the device itself.</div>
+</div></div>
+<footer>METAR Lamp Finder demo page · <a href="support.html">Support</a> · <a href="privacy.html">Privacy</a></footer>
+<script>
+// Static demo: other tabs just reveal a note instead of loading device settings.
+(function(){
+  var note=document.getElementById('demonote');
+  var btns=document.querySelectorAll('.tabbtn');
+  for(var i=0;i<btns.length;i++){(function(b){
+    b.onclick=function(){
+      var status=b.getAttribute('data-tab')==='status';
+      note.style.display=status?'none':'';
+      for(var j=0;j<btns.length;j++)btns[j].classList.toggle('active',btns[j]===b);
+      if(status)return;
+    };
+  })(btns[i]);}
+})();
+</script>
 </body>
 </html>
